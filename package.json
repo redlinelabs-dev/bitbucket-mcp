@@ -1,0 +1,35 @@
+{
+  "name": "@redlinelabs/bitbucket-mcp",
+  "version": "0.0.0",
+  "bin": "dist/index.js",
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "scripts": {
+    "build": "rm -rf dist && tsgo",
+    "start": "node dist/index.js",
+    "dev": "tsgo --watch",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "fmt": "oxfmt",
+    "fmt:check": "oxfmt --check",
+    "check": "tsgo --noEmit && oxlint && oxfmt --check",
+    "fix": "oxlint --fix && oxfmt",
+    "prepare": "husky"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.28.0",
+    "dotenv": "^17.3.1",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^20.5.0",
+    "@commitlint/config-conventional": "^20.5.0",
+    "@types/node": "latest",
+    "@typescript/native-preview": "latest",
+    "husky": "^9.1.7",
+    "oxfmt": "latest",
+    "oxlint": "latest"
+  }
+}
