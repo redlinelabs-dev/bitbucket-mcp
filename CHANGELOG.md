@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.4](https://github.com/redlinelabs-dev/bitbucket-mcp/compare/bitbucket-mcp-v0.1.3...bitbucket-mcp-v0.1.4) (2026-03-27)
+
+
+### Features
+
+* support bitbucket API tokens (bearer auth) ([ac33207](https://github.com/redlinelabs-dev/bitbucket-mcp/commit/ac3320784c5f6a93a82c2c20cddb7431b3cc7f1a))
+
 ## [0.1.3](https://github.com/redlinelabs-dev/bitbucket-mcp/compare/bitbucket-mcp-v0.1.2...bitbucket-mcp-v0.1.3) (2026-03-27)
 
 
