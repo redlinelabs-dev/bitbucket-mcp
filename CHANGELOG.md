@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.2.0](https://github.com/redlinelabs-dev/bitbucket-mcp/compare/bitbucket-mcp-v0.1.4...bitbucket-mcp-v0.2.0) (2026-03-27)
+
+
+### ⚠ BREAKING CHANGES
+
+* use basic auth with email for bitbucket API tokens
+
+### Bug Fixes
+
+* use basic auth with email for bitbucket API tokens ([7bd9222](https://github.com/redlinelabs-dev/bitbucket-mcp/commit/7bd92222289de5feb2b361f2789e7f015487307f))
+
 ## [0.1.4](https://github.com/redlinelabs-dev/bitbucket-mcp/compare/bitbucket-mcp-v0.1.3...bitbucket-mcp-v0.1.4) (2026-03-27)
 
 
