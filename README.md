@@ -21,26 +21,28 @@ MCP server for Bitbucket Cloud. Gives AI assistants (Claude Desktop, Claude Code
 
 ## Setup
 
-### 1. Create a Bitbucket App Password
+### 1. Create a Bitbucket API Token
 
-Go to **Bitbucket > Personal settings > App passwords** and create one with read/write access to repositories and pull requests.
+Go to **Bitbucket > Personal settings > API tokens** and create one with read/write access to repositories and pull requests.
 
 ### 2. Configure environment
 
 Create a `.env` file (or pass env vars directly):
 
 ```env
+BITBUCKET_API_TOKEN=your-api-token
 BITBUCKET_USERNAME=your-username
-BITBUCKET_APP_PASSWORD=your-app-password
 BITBUCKET_WORKSPACE=your-workspace
 ```
+
+`BITBUCKET_USERNAME` is still needed for API queries that filter by user (e.g. "my review queue").
 
 ### 3. Add to Claude Code
 
 ```bash
 claude mcp add --transport stdio \
+  --env BITBUCKET_API_TOKEN=your-api-token \
   --env BITBUCKET_USERNAME=your-username \
-  --env BITBUCKET_APP_PASSWORD=your-app-password \
   --env BITBUCKET_WORKSPACE=your-workspace \
   bitbucket -- npx -y @redlinelabs/bitbucket-mcp
 ```
@@ -58,8 +60,8 @@ Edit `%APPDATA%\Claude\claude_desktop_config.json` (Windows) or `~/Library/Appli
       "command": "npx",
       "args": ["-y", "@redlinelabs/bitbucket-mcp"],
       "env": {
+        "BITBUCKET_API_TOKEN": "your-api-token",
         "BITBUCKET_USERNAME": "your-username",
-        "BITBUCKET_APP_PASSWORD": "your-app-password",
         "BITBUCKET_WORKSPACE": "your-workspace"
       }
     }

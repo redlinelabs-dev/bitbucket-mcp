@@ -9,16 +9,25 @@ import { z } from "zod";
 // Config
 // ============================================================================
 
+const API_TOKEN = process.env["BITBUCKET_API_TOKEN"] ?? "";
 const USERNAME = process.env["BITBUCKET_USERNAME"] ?? "";
-const APP_PASSWORD = process.env["BITBUCKET_APP_PASSWORD"] ?? "";
 const WORKSPACE = process.env["BITBUCKET_WORKSPACE"] ?? "";
 const BASE = "https://api.bitbucket.org/2.0";
-const AUTH_HEADER = "Basic " + Buffer.from(`${USERNAME}:${APP_PASSWORD}`).toString("base64");
 
-if (!USERNAME || !APP_PASSWORD) {
-  console.error("BITBUCKET_USERNAME and BITBUCKET_APP_PASSWORD env vars are required.");
+function resolveAuthHeader(): string {
+  if (API_TOKEN) {
+    return `Bearer ${API_TOKEN}`;
+  }
+  // Legacy: support app passwords until Bitbucket removes them (June 2026)
+  const appPassword = process.env["BITBUCKET_APP_PASSWORD"] ?? "";
+  if (USERNAME && appPassword) {
+    return "Basic " + Buffer.from(`${USERNAME}:${appPassword}`).toString("base64");
+  }
+  console.error("Set BITBUCKET_API_TOKEN, or both BITBUCKET_USERNAME and BITBUCKET_APP_PASSWORD.");
   process.exit(1);
 }
+
+const AUTH_HEADER = resolveAuthHeader();
 
 // ============================================================================
 // Zod schemas — the contract between BitBucket's API and our code.
