@@ -11,6 +11,8 @@ permissions:
 jobs:
   release-please:
     runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     outputs:
       release_created: ${{ steps.release.outputs.release_created }}
     steps:
@@ -24,6 +26,8 @@ jobs:
     needs: release-please
     if: needs.release-please.outputs.release_created == 'true'
     runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     permissions:
       contents: read
       id-token: write
