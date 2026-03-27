@@ -13,6 +13,10 @@ const API_TOKEN = process.env["BITBUCKET_API_TOKEN"] ?? "";
 const EMAIL = process.env["BITBUCKET_EMAIL"] ?? "";
 const USERNAME = process.env["BITBUCKET_USERNAME"] ?? "";
 const WORKSPACE = process.env["BITBUCKET_WORKSPACE"] ?? "";
+const REPOS = (process.env["BITBUCKET_REPOS"] ?? "")
+  .split(",")
+  .map((s) => s.trim())
+  .filter(Boolean);
 const BASE = "https://api.bitbucket.org/2.0";
 
 function resolveAuthHeader(): string {
@@ -437,11 +441,31 @@ function resolveWs(workspace: string | undefined): string {
 }
 
 async function getContributorRepos(ws: string): Promise<string[]> {
-  const data = await getTyped(paginated(RepoSchema), `/repositories/${ws}`, {
+  if (REPOS.length > 0) return REPOS;
+
+  const slugs: string[] = [];
+  const schema = paginated(RepoSchema);
+  let nextPage: string | undefined;
+
+  // First page
+  const first = await getTyped(schema, `/repositories/${ws}`, {
     role: "contributor",
     pagelen: 100,
   });
-  return data.values.map((r) => r.slug);
+  for (const r of first.values) slugs.push(r.slug);
+  nextPage = first.next;
+
+  // Follow pagination
+  while (nextPage) {
+    const url = new URL(nextPage);
+    const params: Record<string, string> = {};
+    for (const [k, v] of url.searchParams.entries()) params[k] = v;
+    const page = await getTyped(schema, url.pathname.replace("/2.0", ""), params);
+    for (const r of page.values) slugs.push(r.slug);
+    nextPage = page.next;
+  }
+
+  return slugs;
 }
 
 // ============================================================================

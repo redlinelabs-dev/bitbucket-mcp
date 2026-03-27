@@ -66,7 +66,8 @@ Edit `%APPDATA%\Claude\claude_desktop_config.json` (Windows) or `~/Library/Appli
         "BITBUCKET_API_TOKEN": "your-api-token",
         "BITBUCKET_EMAIL": "your-atlassian-email",
         "BITBUCKET_USERNAME": "your-bitbucket-username",
-        "BITBUCKET_WORKSPACE": "your-workspace"
+        "BITBUCKET_WORKSPACE": "your-workspace",
+        "BITBUCKET_REPOS": "repo-name-one,repo-name-two"
       }
     }
   }
