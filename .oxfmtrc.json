@@ -11,5 +11,5 @@
       "unknown"
     ]
   },
-  "ignorePatterns": []
+  "ignorePatterns": ["CHANGELOG.md"]
 }
