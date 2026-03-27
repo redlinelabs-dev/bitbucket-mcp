@@ -1,6 +1,12 @@
 {
   "name": "@redlinelabs/bitbucket-mcp",
   "version": "0.1.2",
+  "description": "MCP server for Bitbucket Cloud — PR review, comments, approvals, and more",
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/redlinelabs-dev/bitbucket-mcp.git"
+  },
   "bin": {
     "bitbucket-mcp": "dist/index.js"
   },
@@ -33,5 +39,8 @@
     "husky": "^9.1.7",
     "oxfmt": "latest",
     "oxlint": "latest"
+  },
+  "engines": {
+    "node": ">=24"
   }
 }
