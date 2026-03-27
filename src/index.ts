@@ -10,20 +10,24 @@ import { z } from "zod";
 // ============================================================================
 
 const API_TOKEN = process.env["BITBUCKET_API_TOKEN"] ?? "";
+const EMAIL = process.env["BITBUCKET_EMAIL"] ?? "";
 const USERNAME = process.env["BITBUCKET_USERNAME"] ?? "";
 const WORKSPACE = process.env["BITBUCKET_WORKSPACE"] ?? "";
 const BASE = "https://api.bitbucket.org/2.0";
 
 function resolveAuthHeader(): string {
-  if (API_TOKEN) {
-    return `Bearer ${API_TOKEN}`;
+  // API tokens with scopes (Basic auth with email:token)
+  if (API_TOKEN && EMAIL) {
+    return "Basic " + Buffer.from(`${EMAIL}:${API_TOKEN}`).toString("base64");
   }
-  // Legacy: support app passwords until Bitbucket removes them (June 2026)
+  // Legacy: app passwords (Basic auth with username:password, removed June 2026)
   const appPassword = process.env["BITBUCKET_APP_PASSWORD"] ?? "";
   if (USERNAME && appPassword) {
     return "Basic " + Buffer.from(`${USERNAME}:${appPassword}`).toString("base64");
   }
-  console.error("Set BITBUCKET_API_TOKEN, or both BITBUCKET_USERNAME and BITBUCKET_APP_PASSWORD.");
+  console.error(
+    "Set BITBUCKET_EMAIL + BITBUCKET_API_TOKEN, or BITBUCKET_USERNAME + BITBUCKET_APP_PASSWORD.",
+  );
   process.exit(1);
 }
 

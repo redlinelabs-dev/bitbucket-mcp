@@ -31,18 +31,21 @@ Create a `.env` file (or pass env vars directly):
 
 ```env
 BITBUCKET_API_TOKEN=your-api-token
-BITBUCKET_USERNAME=your-username
+BITBUCKET_EMAIL=your-atlassian-email
+BITBUCKET_USERNAME=your-bitbucket-username
 BITBUCKET_WORKSPACE=your-workspace
 ```
 
-`BITBUCKET_USERNAME` is still needed for API queries that filter by user (e.g. "my review queue").
+- `BITBUCKET_EMAIL` — your Atlassian account email (used for API token auth)
+- `BITBUCKET_USERNAME` — your Bitbucket username (used for filtering PRs by user)
 
 ### 3. Add to Claude Code
 
 ```bash
 claude mcp add --transport stdio \
   --env BITBUCKET_API_TOKEN=your-api-token \
-  --env BITBUCKET_USERNAME=your-username \
+  --env BITBUCKET_EMAIL=your-atlassian-email \
+  --env BITBUCKET_USERNAME=your-bitbucket-username \
   --env BITBUCKET_WORKSPACE=your-workspace \
   bitbucket -- npx -y @redlinelabs/bitbucket-mcp
 ```
@@ -61,7 +64,8 @@ Edit `%APPDATA%\Claude\claude_desktop_config.json` (Windows) or `~/Library/Appli
       "args": ["-y", "@redlinelabs/bitbucket-mcp"],
       "env": {
         "BITBUCKET_API_TOKEN": "your-api-token",
-        "BITBUCKET_USERNAME": "your-username",
+        "BITBUCKET_EMAIL": "your-atlassian-email",
+        "BITBUCKET_USERNAME": "your-bitbucket-username",
         "BITBUCKET_WORKSPACE": "your-workspace"
       }
     }
