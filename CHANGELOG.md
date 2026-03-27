@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.1.2](https://github.com/redlinelabs-dev/bitbucket-mcp/compare/bitbucket-mcp-v0.1.1...bitbucket-mcp-v0.1.2) (2026-03-27)
+
+
+### Bug Fixes
+
+* use explicit bin field to avoid npm publish warnings ([7784bc7](https://github.com/redlinelabs-dev/bitbucket-mcp/commit/7784bc7198ce00b41b77586eb17334f706b3600e))
+
+
+### Miscellaneous
+
+* fix github language detection to show typescript ([fc9c977](https://github.com/redlinelabs-dev/bitbucket-mcp/commit/fc9c9779607373f11c62ed69701d254d28a6075e))
+
 ## [0.1.1](https://github.com/redlinelabs-dev/bitbucket-mcp/compare/bitbucket-mcp-v0.1.0...bitbucket-mcp-v0.1.1) (2026-03-27)
 
 
