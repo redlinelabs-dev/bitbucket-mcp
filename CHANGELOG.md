@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.3](https://github.com/redlinelabs-dev/bitbucket-mcp/compare/bitbucket-mcp-v0.1.2...bitbucket-mcp-v0.1.3) (2026-03-27)
+
+
+### Bug Fixes
+
+* add package metadata and remove declaration output ([c46d4c4](https://github.com/redlinelabs-dev/bitbucket-mcp/commit/c46d4c4391e00894a1fe83fc46e3a0dfebff95c1))
+* drop provenance flag for private repo publishing ([b54beb5](https://github.com/redlinelabs-dev/bitbucket-mcp/commit/b54beb5b1f4105ce1355335d03b12b8d27cb3bd1))
+
 ## [0.1.2](https://github.com/redlinelabs-dev/bitbucket-mcp/compare/bitbucket-mcp-v0.1.1...bitbucket-mcp-v0.1.2) (2026-03-27)
 
 

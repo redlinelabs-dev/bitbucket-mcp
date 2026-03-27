@@ -1,6 +1,6 @@
 {
   "name": "@redlinelabs/bitbucket-mcp",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "MCP server for Bitbucket Cloud — PR review, comments, approvals, and more",
   "license": "UNLICENSED",
   "repository": {
