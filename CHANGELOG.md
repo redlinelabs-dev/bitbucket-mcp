@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/redlinelabs-dev/bitbucket-mcp/compare/bitbucket-mcp-v0.2.0...bitbucket-mcp-v0.2.1) (2026-03-27)
+
+
+### Features
+
+* add BITBUCKET_REPOS env var and paginate repo discovery ([1b89b33](https://github.com/redlinelabs-dev/bitbucket-mcp/commit/1b89b33177bdc6f527fbae338f3c3b9d236836ad))
+
 ## [0.2.0](https://github.com/redlinelabs-dev/bitbucket-mcp/compare/bitbucket-mcp-v0.1.4...bitbucket-mcp-v0.2.0) (2026-03-27)
 
 
