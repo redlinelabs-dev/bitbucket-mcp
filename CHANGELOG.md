@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.1.1](https://github.com/redlinelabs-dev/bitbucket-mcp/compare/bitbucket-mcp-v0.1.0...bitbucket-mcp-v0.1.1) (2026-03-27)
+
+
+### Bug Fixes
+
+* exclude CHANGELOG.md from format checking ([29774b6](https://github.com/redlinelabs-dev/bitbucket-mcp/commit/29774b6bf99c9d7b48fb812c4b1d8636d8965537))
+
+
+### Miscellaneous
+
+* remove release-as override after initial release ([fe0ad5f](https://github.com/redlinelabs-dev/bitbucket-mcp/commit/fe0ad5f73c914591b7bbfc9eea3944bb66a68820))
+
 ## 0.1.0 (2026-03-27)
 
 
