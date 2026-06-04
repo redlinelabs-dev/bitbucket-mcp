@@ -4,20 +4,65 @@ MCP server for Bitbucket Cloud. Gives AI assistants (Claude Desktop, Claude Code
 
 ## Tools
 
-| Tool              | Description                                        |
-| ----------------- | -------------------------------------------------- |
-| `my_review_queue` | PRs where you are a reviewer                       |
-| `my_open_prs`     | PRs you authored                                   |
-| `pr_details`      | Full PR details (description, reviewers, branches) |
-| `pr_comments`     | Threaded comments with inline file/line info       |
-| `pr_diffstat`     | Changed files summary (lighter than full diff)     |
-| `pr_diff`         | Full unified diff                                  |
-| `pr_activity`     | Timeline of approvals, updates, comments           |
-| `add_comment`     | Post a comment (general, inline, or reply)         |
-| `approve_pr`      | Approve a PR                                       |
-| `unapprove_pr`    | Remove your approval                               |
-| `request_changes` | Request changes on a PR                            |
-| `list_repos`      | List repos in the workspace                        |
+Tools are organized into **toolsets** (groups) you can enable/disable — see
+[Toolsets](#toolsets). `✏️` marks mutating (write) tools, which can be disabled all at
+once with `BITBUCKET_READ_ONLY`.
+
+### `pulls`
+
+| Tool                   | Description                                          |
+| ---------------------- | ---------------------------------------------------- |
+| `my_review_queue`      | PRs where you are a reviewer                         |
+| `my_open_prs`          | PRs you authored                                     |
+| `pr_details`           | Full PR details (description, reviewers w/ approval) |
+| `pr_diffstat`          | Changed files summary (lighter than full diff)       |
+| `pr_diff`              | Full unified diff                                    |
+| `pr_activity`          | Timeline of approvals, updates, comments             |
+| `pr_commits`           | Commits that make up the PR                          |
+| `pr_statuses`          | Build/CI statuses reported on the PR                 |
+| `create_pr` ✏️         | Open a new pull request                              |
+| `update_pr` ✏️         | Edit a PR (description, title, reviewers, …)         |
+| `merge_pr` ✏️          | Merge a PR (destructive)                             |
+| `decline_pr` ✏️        | Decline/reject a PR (destructive)                    |
+| `approve_pr` ✏️        | Approve a PR                                         |
+| `unapprove_pr` ✏️      | Remove your approval                                 |
+| `request_changes` ✏️   | Request changes on a PR                              |
+| `unrequest_changes` ✏️ | Remove your "request changes" status                 |
+
+### `comments`
+
+| Tool                 | Description                                  |
+| -------------------- | -------------------------------------------- |
+| `pr_comments`        | Threaded comments with inline file/line info |
+| `add_comment` ✏️     | Post a comment (general, inline, or reply)   |
+| `update_comment` ✏️  | Edit an existing comment                     |
+| `delete_comment` ✏️  | Delete a comment (destructive)               |
+| `resolve_comment` ✏️ | Resolve a comment thread                     |
+| `reopen_comment` ✏️  | Reopen (unresolve) a comment thread          |
+
+### `tasks`
+
+| Tool             | Description                                |
+| ---------------- | ------------------------------------------ |
+| `pr_tasks`       | List PR tasks with resolved state          |
+| `add_task` ✏️    | Add a task to a PR                         |
+| `update_task` ✏️ | Edit a task or mark it resolved/unresolved |
+| `delete_task` ✏️ | Delete a task (destructive)                |
+
+### `branches`
+
+| Tool               | Description                          |
+| ------------------ | ------------------------------------ |
+| `list_branches`    | List branches (name, latest commit)  |
+| `get_branch`       | Get one branch by full name          |
+| `create_branch` ✏️ | Create a branch from a commit/branch |
+| `delete_branch` ✏️ | Delete a branch (destructive)        |
+
+### `repos`
+
+| Tool         | Description                 |
+| ------------ | --------------------------- |
+| `list_repos` | List repos in the workspace |
 
 ## Setup
 
@@ -38,6 +83,10 @@ BITBUCKET_WORKSPACE=your-workspace
 
 - `BITBUCKET_EMAIL` — your Atlassian account email (used for API token auth)
 - `BITBUCKET_USERNAME` — your Bitbucket username (used for filtering PRs by user)
+- `BITBUCKET_WORKSPACE` — default workspace (tools accept a `workspace` arg to override)
+- `BITBUCKET_REPOS` — optional comma-separated repo allowlist (skips repo discovery)
+- `BITBUCKET_TOOLSETS` — optional comma-separated [toolsets](#toolsets) to expose (default: all)
+- `BITBUCKET_READ_ONLY` — optional; set to `true` to expose only read tools
 
 ### 3. Add to Claude Code
 
@@ -73,6 +122,24 @@ Edit `%APPDATA%\Claude\claude_desktop_config.json` (Windows) or `~/Library/Appli
   }
 }
 ```
+
+## Toolsets
+
+To avoid bloating the model's context window, you can expose only the tool groups you
+need. Two independent controls:
+
+- **`BITBUCKET_TOOLSETS`** — comma-separated group names, or `all` (default). Groups:
+  `pulls`, `comments`, `tasks`, `branches`, `repos`.
+- **`BITBUCKET_READ_ONLY`** — `true`/`1` exposes only non-mutating tools (drops every `✏️`
+  tool across all enabled groups).
+
+```env
+# Only PR + comment tools, and never anything that writes:
+BITBUCKET_TOOLSETS=pulls,comments
+BITBUCKET_READ_ONLY=true
+```
+
+Disabled tools are hidden from `tools/list` and rejected if called directly.
 
 ## Development
 
