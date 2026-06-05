@@ -41,10 +41,10 @@ jobs:
           prompt: "/code-review:code-review ${{ github.repository }}/pull/${{ github.event.pull_request.number }}"
           # Surface the agent's full output in the run log so review results are diagnosable
           show_full_output: true
-          # Pre-authorize the read-only shell the review agent uses to fetch the diff and
-          # post comments. Headless CI runs in default permission mode, which auto-denies
-          # any Bash call (no human to approve the prompt); without this the agent gets
-          # blocked fetching the diff and posts nothing. Scoped to gh + git only.
-          claude_args: '--allowedTools "Bash(gh:*),Bash(git:*)"'
+          # The code-review plugin posts via the built-in GitHub MCP tool, which must be
+          # explicitly allowed; the stock /install-github-app template omits it, so the
+          # agent never buffers any inline comments and nothing is posted. Allowing just
+          # this one scoped tool is what makes the review post (no broad shell needed).
+          claude_args: '--allowedTools "mcp__github_inline_comment__create_inline_comment"'
           # See https://github.com/anthropics/claude-code-action/blob/main/docs/usage.md
           # or https://code.claude.com/docs/en/cli-reference for available options
