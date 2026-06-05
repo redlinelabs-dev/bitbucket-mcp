@@ -1327,7 +1327,8 @@ const TOOLS = [
         name: { type: "string", description: "New branch name" },
         target: {
           type: "string",
-          description: "Commit hash or existing branch name to branch from",
+          description:
+            "Commit hash or existing branch name to branch from. If a branch name looks like a hex commit hash, pass the full 40-char SHA.",
         },
         workspace: { type: "string" },
       },
@@ -1710,14 +1711,14 @@ async function handleTool(name: string, rawArgs: unknown): Promise<string> {
     case "update_task": {
       const args = UpdateTaskInput.parse(rawArgs);
       const ws = resolveWs(args.workspace);
-      const body: Record<string, unknown> = {};
-      if (args.content !== undefined) body["content"] = { raw: args.content };
-      if (args.state !== undefined) body["state"] = args.state;
-      const task = await putTyped(
-        TaskSchema,
-        `/repositories/${ws}/${args.repo_slug}/pullrequests/${String(args.pr_id)}/tasks/${String(args.task_id)}`,
-        body,
-      );
+      const base = `/repositories/${ws}/${args.repo_slug}/pullrequests/${String(args.pr_id)}/tasks/${String(args.task_id)}`;
+      // Read-modify-write: Bitbucket's PUT replaces the task, so a state-only update
+      // would otherwise wipe the text. Fetch current, then overlay provided fields.
+      const current = await getTyped(TaskSchema, base);
+      const task = await putTyped(TaskSchema, base, {
+        content: { raw: args.content ?? current.content.raw },
+        state: args.state ?? current.state,
+      });
       return JSON.stringify(formatTask(task), null, 2);
     }
 
