@@ -55,12 +55,18 @@ const ENABLED_GROUPS: Set<ToolGroup> = (() => {
   if (raw === "" || raw === "all") {
     return new Set<ToolGroup>(["pulls", "comments", "tasks", "branches", "repos"]);
   }
-  return new Set<ToolGroup>(
-    raw
-      .split(",")
-      .map((s) => s.trim())
-      .filter(isToolGroup),
-  );
+  const tokens = raw
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+  for (const t of tokens) {
+    if (!isToolGroup(t)) {
+      console.error(
+        `[bitbucket-mcp] Unknown toolset "${t}" ignored (valid: pulls, comments, tasks, branches, repos).`,
+      );
+    }
+  }
+  return new Set<ToolGroup>(tokens.filter(isToolGroup));
 })();
 
 const READ_ONLY = ["1", "true", "yes"].includes(
@@ -381,16 +387,14 @@ async function getText(
 
 async function postTyped<T>(schema: z.ZodType<T>, path: string, body?: unknown): Promise<T> {
   const r = await rawFetch("POST", path, undefined, body);
-  const contentLength = r.headers.get("content-length");
-  if (contentLength === "0") return schema.parse({});
+  if (r.status === 204) return schema.parse({});
   const json: unknown = await r.json();
   return schema.parse(json);
 }
 
 async function putTyped<T>(schema: z.ZodType<T>, path: string, body?: unknown): Promise<T> {
   const r = await rawFetch("PUT", path, undefined, body);
-  const contentLength = r.headers.get("content-length");
-  if (contentLength === "0") return schema.parse({});
+  if (r.status === 204) return schema.parse({});
   const json: unknown = await r.json();
   return schema.parse(json);
 }
@@ -747,6 +751,8 @@ const TaskRefInput = PrRefInput.extend({
 const UpdateTaskInput = TaskRefInput.extend({
   content: z.string().optional(),
   state: z.union([z.literal("RESOLVED"), z.literal("UNRESOLVED")]).optional(),
+}).refine((a) => a.content !== undefined || a.state !== undefined, {
+  message: "Provide content and/or state to update.",
 });
 
 const ListBranchesInput = z.object({
@@ -994,7 +1000,8 @@ const TOOLS = [
         reviewers: {
           type: "array",
           items: { type: "string" },
-          description: "Reviewer account IDs (replaces existing reviewers)",
+          description:
+            "Reviewer account IDs. If omitted, existing reviewers are preserved; if provided, replaces them entirely.",
         },
         close_source_branch: { type: "boolean" },
         workspace: { type: "string" },
@@ -1730,10 +1737,21 @@ async function handleTool(name: string, rawArgs: unknown): Promise<string> {
     case "create_branch": {
       const args = CreateBranchInput.parse(rawArgs);
       const ws = resolveWs(args.workspace);
+      // Bitbucket's create-branch needs target.hash to be a commit SHA. Resolve a
+      // branch name to its tip first so the documented "branch from a branch" works;
+      // a bare commit hash passes through untouched.
+      let hash = args.target;
+      if (!/^[0-9a-f]{7,40}$/i.test(args.target)) {
+        const ref = await getTyped(
+          BranchSchema,
+          `/repositories/${ws}/${args.repo_slug}/refs/branches/${encodeRef(args.target)}`,
+        );
+        hash = ref.target?.hash || args.target;
+      }
       const branch = await postTyped(
         BranchSchema,
         `/repositories/${ws}/${args.repo_slug}/refs/branches`,
-        { name: args.name, target: { hash: args.target } },
+        { name: args.name, target: { hash } },
       );
       return JSON.stringify(formatBranch(branch), null, 2);
     }
