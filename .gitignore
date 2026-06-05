@@ -2,3 +2,7 @@ node_modules
 dist
 
 .env
+
+# Local agent scratch / process artifacts (not project code)
+Plans/
+MEMORY/
