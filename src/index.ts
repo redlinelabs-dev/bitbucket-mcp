@@ -452,8 +452,11 @@ function formatPrDetails(pr: PullRequest) {
 
   for (const p of pr.participants) {
     if (p.role === "REVIEWER") {
-      const name = p.user.display_name;
-      const rev = reviewers.find((r) => r.name === name);
+      // Prefer matching by account_id (display names can collide); fall back to name.
+      const pid = p.user.account_id;
+      const rev =
+        (pid ? reviewers.find((r) => r.account_id === pid) : undefined) ??
+        reviewers.find((r) => r.name === p.user.display_name);
       if (rev) {
         rev.approved = p.approved;
         rev.state = p.state?.name ?? "";
@@ -642,9 +645,15 @@ function reviewersByAccountId(ids: readonly string[]): { account_id: string }[] 
 function preserveReviewers(
   reviewers: readonly z.infer<typeof ReviewerSchema>[],
 ): ({ account_id: string } | { uuid: string })[] {
-  return reviewers
+  const kept = reviewers
     .map((r) => (r.account_id ? { account_id: r.account_id } : r.uuid ? { uuid: r.uuid } : null))
     .filter((x): x is { account_id: string } | { uuid: string } => x !== null);
+  if (kept.length < reviewers.length) {
+    console.error(
+      `[bitbucket-mcp] update_pr: dropped ${reviewers.length - kept.length} reviewer(s) with no account_id/uuid.`,
+    );
+  }
+  return kept;
 }
 
 // Branch names legally contain "/" (kept as path separators) plus characters like
@@ -1760,9 +1769,11 @@ async function handleTool(name: string, rawArgs: unknown): Promise<string> {
           BranchSchema,
           `/repositories/${ws}/${args.repo_slug}/refs/branches/${encodeRef(args.target)}`,
         );
-        // `||` (not `??`) on purpose: fall back to the original target when the
-        // resolved hash is missing OR the empty string that BranchSchema's .catch("") yields.
-        hash = ref.target?.hash || args.target;
+        // Fail loudly if the tip can't be resolved, rather than POST a branch name as a
+        // commit hash (BranchSchema's .catch("") can make an empty hash slip through).
+        const tip = ref.target?.hash;
+        if (!tip) throw new Error(`Could not resolve tip commit of branch "${args.target}".`);
+        hash = tip;
       }
       const branch = await postTyped(
         BranchSchema,
