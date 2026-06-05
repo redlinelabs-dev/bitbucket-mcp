@@ -66,7 +66,13 @@ const ENABLED_GROUPS: Set<ToolGroup> = (() => {
       );
     }
   }
-  return new Set<ToolGroup>(tokens.filter(isToolGroup));
+  const enabled = new Set<ToolGroup>(tokens.filter(isToolGroup));
+  if (enabled.size === 0) {
+    console.error(
+      "[bitbucket-mcp] No valid toolsets configured — all tools are disabled. Check BITBUCKET_TOOLSETS.",
+    );
+  }
+  return enabled;
 })();
 
 const READ_ONLY = ["1", "true", "yes"].includes(
@@ -1238,8 +1244,15 @@ const TOOLS = [
         repo_slug: { type: "string" },
         pr_id: { type: "number" },
         task_id: { type: "number" },
-        content: { type: "string", description: "New task text" },
-        state: { type: "string", enum: ["RESOLVED", "UNRESOLVED"] },
+        content: {
+          type: "string",
+          description: "New task text. Provide content and/or state — at least one is required.",
+        },
+        state: {
+          type: "string",
+          enum: ["RESOLVED", "UNRESOLVED"],
+          description: "Provide content and/or state — at least one is required.",
+        },
         workspace: { type: "string" },
       },
       required: ["repo_slug", "pr_id", "task_id"],
@@ -1509,8 +1522,9 @@ async function handleTool(name: string, rawArgs: unknown): Promise<string> {
         },
         close_source_branch: args.close_source_branch ?? current.close_source_branch,
       };
-      const description = args.description ?? current.description;
-      if (description !== null && description !== undefined) body["description"] = description;
+      // Always echo description back: Bitbucket's PUT replaces fields, and some API
+      // versions reject a PUT that omits it. Default a null/absent description to "".
+      body["description"] = args.description ?? current.description ?? "";
       body["reviewers"] =
         args.reviewers !== undefined
           ? reviewersByAccountId(args.reviewers)
@@ -1746,6 +1760,8 @@ async function handleTool(name: string, rawArgs: unknown): Promise<string> {
           BranchSchema,
           `/repositories/${ws}/${args.repo_slug}/refs/branches/${encodeRef(args.target)}`,
         );
+        // `||` (not `??`) on purpose: fall back to the original target when the
+        // resolved hash is missing OR the empty string that BranchSchema's .catch("") yields.
         hash = ref.target?.hash || args.target;
       }
       const branch = await postTyped(
