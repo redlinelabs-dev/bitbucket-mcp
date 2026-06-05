@@ -41,5 +41,10 @@ jobs:
           prompt: "/code-review:code-review ${{ github.repository }}/pull/${{ github.event.pull_request.number }}"
           # Surface the agent's full output in the run log so review results are diagnosable
           show_full_output: true
+          # Pre-authorize the read-only shell the review agent uses to fetch the diff and
+          # post comments. Headless CI runs in default permission mode, which auto-denies
+          # any Bash call (no human to approve the prompt); without this the agent gets
+          # blocked fetching the diff and posts nothing. Scoped to gh + git only.
+          claude_args: '--allowedTools "Bash(gh:*),Bash(git:*)"'
           # See https://github.com/anthropics/claude-code-action/blob/main/docs/usage.md
           # or https://code.claude.com/docs/en/cli-reference for available options
