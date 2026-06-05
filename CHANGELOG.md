@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.2](https://github.com/redlinelabs-dev/bitbucket-mcp/compare/bitbucket-mcp-v0.2.1...bitbucket-mcp-v0.2.2) (2026-06-05)
+
+
+### Miscellaneous
+
+* gitignore local Plans/ and MEMORY/ scratch dirs ([5c74388](https://github.com/redlinelabs-dev/bitbucket-mcp/commit/5c743889020ffd01a32aaf005e7025d928354c56))
+
 ## [0.2.1](https://github.com/redlinelabs-dev/bitbucket-mcp/compare/bitbucket-mcp-v0.2.0...bitbucket-mcp-v0.2.1) (2026-03-27)
 
 
