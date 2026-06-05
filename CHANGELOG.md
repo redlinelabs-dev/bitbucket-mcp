@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.2.2](https://github.com/redlinelabs-dev/bitbucket-mcp/compare/bitbucket-mcp-v0.2.1...bitbucket-mcp-v0.2.2) (2026-06-05)
+
+
+### Features
+
+* add full PR lifecycle tools and toggleable toolsets ([50783b4](https://github.com/redlinelabs-dev/bitbucket-mcp/commit/50783b460e32ad99145c656e9041cb2c9282b9a6))
+
+
+### Bug Fixes
+
+* address PR review feedback on branch/task/toolset handling ([f63a967](https://github.com/redlinelabs-dev/bitbucket-mcp/commit/f63a967797ae515a7584983f9403afeeb3728a03))
+* address round-2 review feedback (update_pr/update_task/toolsets) ([9ea4ac6](https://github.com/redlinelabs-dev/bitbucket-mcp/commit/9ea4ac695303f1c72fb71ce037ba2a4dd624b3d1))
+* address round-3 review feedback (create_branch/reviewers) ([74b2615](https://github.com/redlinelabs-dev/bitbucket-mcp/commit/74b26158077bb4b758bfa3c2118060235f1f40a0))
+* read-modify-write update_task; document create_branch SHA ambiguity ([ae14913](https://github.com/redlinelabs-dev/bitbucket-mcp/commit/ae14913698903f440da7c4c8a7962a91d096d324))
+
+
+### Miscellaneous
+
+* gitignore local Plans/ and MEMORY/ scratch dirs ([5c74388](https://github.com/redlinelabs-dev/bitbucket-mcp/commit/5c743889020ffd01a32aaf005e7025d928354c56))
+
 ## [0.2.1](https://github.com/redlinelabs-dev/bitbucket-mcp/compare/bitbucket-mcp-v0.2.0...bitbucket-mcp-v0.2.1) (2026-03-27)
 
 
